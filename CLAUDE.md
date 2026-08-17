@@ -5,7 +5,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Project status
 
 Phase 0 (project scaffolding: Gradle Android library, ktlint/detekt, CI, Gitflow branch
-protection) is complete. Phase 1 (`GKSKNodeComponent`), Phase 2 (`SKNode.entity`), Phase 3
+protection), Phase 1 (`GKSKNodeComponent`), and Phase 2 (`SKNode.entity`) are complete. Phase 3
 (`GKScene`), Phase 4 (agent-steering-to-node sync helper), and Phase 5 (documentation) are not yet
 started. See [`docs/ROADMAP.md`](docs/ROADMAP.md) for the full phase-by-phase plan and progress
 checklist.
@@ -91,6 +91,8 @@ with `sdk.dir=/path/to/Android/sdk`.
 - `docs/ARCHITECTURE.md` — the dependency-mechanism design (no submodules of its own, project-path
   dependency, CI sibling checkouts).
 - `docs/ROADMAP.md` — phased implementation plan and progress checklist.
+- `docs/API_COMPATIBILITY.md` — deviation log from Apple's API shape, filled in per phase as it
+  lands.
 
 ## Git Branching Workflow
 

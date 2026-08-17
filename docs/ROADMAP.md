@@ -33,16 +33,18 @@ has no Apple precedent to mirror (Phase 4), that's called out explicitly.
 
 ## Phase 1 — Entity ↔ Node: `GKSKNodeComponent`
 
-- [ ] `GKSKNodeComponent` — a `GKComponent` wrapping an `SKNode` (`node: SKNode`, `init(node:)`)
-- [ ] Adding the component to a `GKEntity` automatically sets the node's `entity` property to that
-      entity (matches Apple's documented behavior)
-- [ ] Unit tests
+- [x] `GKSKNodeComponent` — a `GKComponent` wrapping an `SKNode` (`node: SKNode`, `init(node:)`)
+- [x] Adding the component to a `GKEntity` automatically sets the node's `entity` property to that
+      entity (matches Apple's documented behavior); removing it clears the node's `entity` again
+- [x] Unit tests
 
 ## Phase 2 — Node → Entity back-reference: `SKNode.entity`
 
-- [ ] `SKNode.entity: GKEntity?` — extension property, primarily set by `GKSKNodeComponent` (Phase
-      1) but assignable directly too, matching Apple's API
-- [ ] Unit tests
+- [x] `SKNode.entity: GKEntity?` — extension property, primarily set by `GKSKNodeComponent` (Phase
+      1) but assignable directly too, matching Apple's API. Implemented as a `WeakHashMap` side
+      table keyed by node identity rather than a real stored property, since `SKNode` is defined
+      in a separate module this repo doesn't own — see `docs/API_COMPATIBILITY.md`
+- [x] Unit tests
 
 ## Phase 3 — `GKScene` (in-memory container)
 
