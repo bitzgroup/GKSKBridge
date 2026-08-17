@@ -12,8 +12,9 @@ inside either sibling library, and how it depends on both without vendoring copi
 
 ## Status
 
-Early scaffolding. The Gradle project builds, but no bridging API has landed yet — scope (which
-cross-framework features this covers) isn't finalized.
+The full [`docs/ROADMAP.md`](docs/ROADMAP.md) plan is complete: entity ↔ node association
+(`GKSKNodeComponent`, `SKNode.entity`), a scene container (`GKScene`), and an agent-steering-to-node
+sync helper (`GKAgentNodeComponent`) are implemented and tested.
 
 ## Requirements
 
@@ -48,6 +49,67 @@ GameplayKit/SpriteKit sibling projects, whose build scripts misresolve `$rootDir
 against this repo's root. See [`CLAUDE.md`](CLAUDE.md#commands).)
 
 See [`CLAUDE.md`](CLAUDE.md) for the full command reference and project structure.
+
+## Usage
+
+A quick tour of the API — see [`docs/API_COMPATIBILITY.md`](docs/API_COMPATIBILITY.md) for where
+and why each one's shape differs from Apple's.
+
+### Entity ↔ node association
+
+```kotlin
+val node = SKNode()
+val entity = GKEntity()
+
+entity.addComponent(GKSKNodeComponent(node))
+node.entity // == entity, set automatically by GKSKNodeComponent
+
+entity.removeComponent<GKSKNodeComponent>()
+node.entity // == null again
+```
+
+### Scene container
+
+```kotlin
+val scene =
+    GKScene().apply {
+        rootNode = SKScene(size = Vector2(1080f, 1920f))
+        entities += entity
+    }
+```
+
+### Agent steering → node sync
+
+```kotlin
+val agent =
+    GKAgent2D().apply {
+        maxSpeed = 4f
+        behavior = GKBehavior.of(GKGoal.toSeekAgent(targetAgent), weight = 1f)
+    }
+entity.addComponent(agent)
+entity.addComponent(GKAgentNodeComponent())
+
+class GameScene(size: Vector2) : SKScene(size) {
+    override fun update(deltaTime: Duration) {
+        entity.update(deltaTime) // advances the agent's steering simulation
+    }
+
+    override fun didFinishUpdate() {
+        // Copy this frame's now-settled agent position/rotation onto every entity's node, after
+        // actions and physics have already been simulated for the frame.
+        scene.syncAgentNodes()
+    }
+}
+```
+
+### `Vector2` bridge
+
+```kotlin
+// GameplayKit's and SpriteKit's Vector2 are separate, identically-shaped types (see
+// docs/API_COMPATIBILITY.md) — these convert between them.
+val skPosition = agent.position.toSKVector2()
+val gkPosition = node.position.toGKVector2()
+```
 
 ## Usage as a git submodule
 
