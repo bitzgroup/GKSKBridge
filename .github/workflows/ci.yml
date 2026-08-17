@@ -1,0 +1,64 @@
+name: CI
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout GKSKBridge
+        uses: actions/checkout@v4
+        with:
+          path: GKSKBridge
+
+      # GKSKBridge carries no submodules of its own (see docs/ARCHITECTURE.md); these are plain
+      # sibling checkouts for this CI build only, matching settings.gradle.kts's relative paths.
+      - name: Checkout GameplayKit (sibling dependency)
+        uses: actions/checkout@v4
+        with:
+          repository: bitzgroup/GameplayKit
+          path: GameplayKit
+
+      - name: Checkout SpriteKit (sibling dependency)
+        uses: actions/checkout@v4
+        with:
+          repository: bitzgroup/SpriteKit
+          path: SpriteKit
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: ktlint
+        run: ./gradlew :gkskbridge:ktlintCheck
+        working-directory: GKSKBridge
+
+      - name: detekt
+        run: ./gradlew :gkskbridge:detekt
+        working-directory: GKSKBridge
+
+      - name: Build
+        run: ./gradlew :gkskbridge:assemble
+        working-directory: GKSKBridge
+
+      - name: Unit tests
+        run: ./gradlew :gkskbridge:testDebugUnitTest
+        working-directory: GKSKBridge
+
+      - name: Upload test reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-reports
+          path: "GKSKBridge/**/build/reports/tests/"
