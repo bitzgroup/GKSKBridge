@@ -1,3 +1,6 @@
+# macOS
+.DS_Store
+
 # Gradle files
 .gradle/
 build/
@@ -32,3 +35,8 @@ google-services.json
 
 # Android Profiling
 *.hprof
+
+# Sibling repos checked out locally for standalone dev/CI (see settings.gradle.kts,
+# docs/ARCHITECTURE.md) — never vendored into this repo.
+/GameplayKit/
+/SpriteKit/
