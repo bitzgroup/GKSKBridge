@@ -81,7 +81,7 @@ sample rather than any shipped API):
 
 ## Phase 5 — Documentation
 
-- [ ] KDoc on every public API surface
-- [ ] `docs/API_COMPATIBILITY.md` — deviation log from Apple's API shape (matching sibling
+- [x] KDoc on every public API surface
+- [x] `docs/API_COMPATIBILITY.md` — deviation log from Apple's API shape (matching sibling
       repos' convention)
-- [ ] README usage examples per bridging feature
+- [x] README usage examples per bridging feature

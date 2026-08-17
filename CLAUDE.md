@@ -4,11 +4,10 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project status
 
-Phase 0 (project scaffolding: Gradle Android library, ktlint/detekt, CI, Gitflow branch
-protection), Phase 1 (`GKSKNodeComponent`), Phase 2 (`SKNode.entity`), Phase 3 (`GKScene`), and
-Phase 4 (`GKAgentNodeComponent`, `toSKVector2`/`toGKVector2`) are complete. Phase 5 (documentation)
-is not yet started. See [`docs/ROADMAP.md`](docs/ROADMAP.md) for the full phase-by-phase plan and
-progress checklist.
+The full [`docs/ROADMAP.md`](docs/ROADMAP.md) plan (Phase 0 scaffolding through Phase 5
+documentation) is complete: `GKSKNodeComponent`, `SKNode.entity`, `GKScene`, and
+`GKAgentNodeComponent`/`toSKVector2`/`toGKVector2` are implemented, tested, and documented (KDoc,
+`docs/API_COMPATIBILITY.md`, README usage examples).
 
 ## Intent
 

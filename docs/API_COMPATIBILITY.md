@@ -8,6 +8,18 @@ reference for developers who already know Apple's GameplayKit/SpriteKit and want
 where — and why — this library's shape differs. It does not restate behavior that matches Apple's
 docs; only intentional deviations, omissions, and additions are listed.
 
+Two deviation categories recur throughout and are called out once here rather than per item below:
+
+- **Side-table stand-ins for properties Apple adds directly to a class this repo doesn't own.**
+  Apple can add a real stored property to `SKNode` because GameplayKit and SpriteKit are both its
+  own frameworks, tightly coupled at the ABI level. Here, `SKNode` lives in the separate
+  [SpriteKit for Android](https://github.com/bitzgroup/SpriteKit) repo, so a Kotlin extension
+  property can't add a backing field to it — an identity-keyed side table stands in instead.
+- **No-Apple-precedent additions.** A few features exist here because they're exactly the kind of
+  cross-framework glue this repo holds, even though Apple ships no equivalent type to mirror —
+  their design instead follows the structure of Apple's own sample code (WWDC talks, etc.) where
+  one exists.
+
 ## Entity ↔ node association (`GKSKNodeComponent`, `SKNode.entity`)
 
 - **`SKNode.entity` is a side table, not a stored property.** On Apple platforms, GameplayKit adds
