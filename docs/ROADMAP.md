@@ -60,13 +60,24 @@ has no Apple precedent to mirror (Phase 4), that's called out explicitly.
 Apple's `GKAgentDelegate` itself lives in GameplayKit and has no SpriteKit dependency — apps are
 expected to implement it themselves to copy a `GKAgent`'s simulated position onto a visual node.
 That boilerplate is exactly the kind of cross-framework glue this repo exists to hold, so it's in
-scope even without a literal Apple type to mirror. **Naming/shape needs sign-off before
-implementation starts** — no Apple docs to anchor the design against.
+scope even without a literal Apple type to mirror.
 
-- [ ] Convenience component (name TBD, e.g. `GKAgentNodeComponent`) wiring a `GKAgent2D`'s
-      simulated position/rotation to an owned `SKNode`, via `GKAgentDelegate`
-- [ ] Confirm naming/shape with maintainer
-- [ ] Unit tests
+Design (confirmed with maintainer, follows the structure of Apple's own WWDC 2015 "DemoBots"
+sample rather than any shipped API):
+
+- [x] `GKAgentNodeComponent` — marker `GKComponent`; its `sync()` looks up the entity's
+      `GKAgent2D` *by class each call* rather than the constructor capturing a fixed reference, so
+      it keeps working if the agent component is ever replaced
+- [x] `sync()` is **not** called from `GKComponent.update()` — running it mid-frame, before that
+      frame's physics/actions have been simulated, would copy a stale or about-to-be-corrected
+      position. It's meant to be called once per frame after everything else has settled, e.g.
+      from an `SKScene` subclass's `didFinishUpdate()` override (matching DemoBots' pattern;
+      `SKScene.didFinishUpdate()` already exists in SpriteKit for Android)
+- [x] `GKScene.syncAgentNodes()` — batch convenience calling `sync()` for every entity in a scene
+- [x] `toSKVector2()`/`toGKVector2()` — GameplayKit's and SpriteKit's `Vector2` are two
+      independently-defined, identically-shaped, unrelated types (no dependency between the
+      libraries), discovered while wiring `sync()`'s position copy; see `docs/API_COMPATIBILITY.md`
+- [x] Unit tests
 
 ## Phase 5 — Documentation
 

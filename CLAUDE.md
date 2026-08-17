@@ -5,10 +5,10 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Project status
 
 Phase 0 (project scaffolding: Gradle Android library, ktlint/detekt, CI, Gitflow branch
-protection), Phase 1 (`GKSKNodeComponent`), Phase 2 (`SKNode.entity`), and Phase 3 (`GKScene`) are
-complete. Phase 4 (agent-steering-to-node sync helper — needs sign-off first, see below) and Phase
-5 (documentation) are not yet started. See [`docs/ROADMAP.md`](docs/ROADMAP.md) for the full
-phase-by-phase plan and progress checklist.
+protection), Phase 1 (`GKSKNodeComponent`), Phase 2 (`SKNode.entity`), Phase 3 (`GKScene`), and
+Phase 4 (`GKAgentNodeComponent`, `toSKVector2`/`toGKVector2`) are complete. Phase 5 (documentation)
+is not yet started. See [`docs/ROADMAP.md`](docs/ROADMAP.md) for the full phase-by-phase plan and
+progress checklist.
 
 ## Intent
 
@@ -72,11 +72,11 @@ with `sdk.dir=/path/to/Android/sdk`.
 - **No `maven-publish` scaffold**, unlike the sibling repos: a `project(...)` dependency doesn't
   translate to a resolvable Maven coordinate, so publishing GKSKBridge to Maven would need
   GameplayKit/SpriteKit to publish stable artifacts first. Revisit if that changes.
-
-## Open architecture decisions (not yet settled)
-
-- **Phase 4 naming/shape** (agent-steering-to-node sync helper) has no Apple precedent to mirror
-  and needs sign-off before implementation — see [`docs/ROADMAP.md`](docs/ROADMAP.md) Phase 4.
+- **Phase 4 shape** (agent-steering-to-node sync helper, no Apple precedent to mirror): a marker
+  `GKComponent` (`GKAgentNodeComponent`) whose `sync()` looks up the entity's `GKAgent2D` by class
+  each call rather than a fixed constructor reference, called once per frame from outside
+  `GKComponent.update()` (e.g. `SKScene.didFinishUpdate()`) — follows the structure of Apple's own
+  WWDC 2015 "DemoBots" sample. See [`docs/ROADMAP.md`](docs/ROADMAP.md) Phase 4.
 
 ## Project structure
 

@@ -30,3 +30,20 @@ docs; only intentional deviations, omissions, and additions are listed.
   them directly. This mirrors the same exclusion
   [GameplayKit for Android](https://github.com/bitzgroup/GameplayKit)'s own docs already document
   for `GKScene` in general.
+
+## Agent steering → node sync (`GKAgentNodeComponent`, `toSKVector2`/`toGKVector2`)
+
+- **No Apple precedent.** `GKAgentDelegate` is itself framework-agnostic in real GameplayKit —
+  apps are expected to implement it themselves to copy an agent's position onto a visual node.
+  `GKAgentNodeComponent` follows the structure of Apple's own WWDC 2015 "DemoBots" sample instead
+  of any shipped API: it looks up the entity's `GKAgent2D` by class on every `sync()` call rather
+  than capturing a fixed reference, and `sync()` is meant to be called once per frame from outside
+  the normal `GKComponent.update()` pass — e.g. an `SKScene` subclass's `didFinishUpdate()`
+  override — once that frame's physics/actions have already been simulated.
+- **`GameplayKit.Vector2` and `SpriteKit.Vector2` are unrelated types.** GameplayKit for Android
+  and SpriteKit for Android each define their own single-precision `Vector2` — identically shaped
+  (`x`/`y` `Float`s) but with no dependency between the libraries, so the compiler won't convert
+  between them (SpriteKit's own `Vector2` KDoc calls this out explicitly). `toSKVector2()`/
+  `toGKVector2()` are plain field-copy conversions bridging the two, used internally by
+  `GKAgentNodeComponent.sync()` and available for any other GameplayKit ↔ SpriteKit position/
+  vector handoff.
