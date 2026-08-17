@@ -4,8 +4,11 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project status
 
-Early scaffolding: a Gradle Android library project builds, lints, and tests, but no bridging API
-has landed yet. Scope (which cross-framework features this repo covers) is not finalized.
+Phase 0 (project scaffolding: Gradle Android library, ktlint/detekt, CI, Gitflow branch
+protection) is complete. Phase 1 (`GKSKNodeComponent`), Phase 2 (`SKNode.entity`), Phase 3
+(`GKScene`), Phase 4 (agent-steering-to-node sync helper), and Phase 5 (documentation) are not yet
+started. See [`docs/ROADMAP.md`](docs/ROADMAP.md) for the full phase-by-phase plan and progress
+checklist.
 
 ## Intent
 
@@ -72,8 +75,8 @@ with `sdk.dir=/path/to/Android/sdk`.
 
 ## Open architecture decisions (not yet settled)
 
-- **Scope**: exactly which cross-framework features are in scope (entity↔node sync, agent
-  steering, others) has not been finalized.
+- **Phase 4 naming/shape** (agent-steering-to-node sync helper) has no Apple precedent to mirror
+  and needs sign-off before implementation — see [`docs/ROADMAP.md`](docs/ROADMAP.md) Phase 4.
 
 ## Project structure
 
@@ -87,6 +90,7 @@ with `sdk.dir=/path/to/Android/sdk`.
 - `config/detekt/detekt.yml` — detekt rule overrides (builds upon detekt's default ruleset).
 - `docs/ARCHITECTURE.md` — the dependency-mechanism design (no submodules of its own, project-path
   dependency, CI sibling checkouts).
+- `docs/ROADMAP.md` — phased implementation plan and progress checklist.
 
 ## Git Branching Workflow
 
