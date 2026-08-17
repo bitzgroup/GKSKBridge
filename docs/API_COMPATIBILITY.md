@@ -20,3 +20,13 @@ docs; only intentional deviations, omissions, and additions are listed.
   identical from the caller's perspective: get/set works the same, and it's not thread-safe,
   matching `SKNode` itself (all access is expected to happen on the same thread that owns the
   node).
+
+## Scene container (`GKScene`)
+
+- **No `GKScene(fileNamed:)` initializer.** Apple's variant loads a scene, along with its
+  associated entities and graphs, from a file authored in Xcode's GameplayKit scene editor. That
+  format is Xcode-specific tooling output with no Android equivalent to load, so `GKScene` here is
+  a plain in-memory container only — build the `rootNode`/`entities`/`graphs` in code and assign
+  them directly. This mirrors the same exclusion
+  [GameplayKit for Android](https://github.com/bitzgroup/GameplayKit)'s own docs already document
+  for `GKScene` in general.

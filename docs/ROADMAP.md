@@ -48,12 +48,12 @@ has no Apple precedent to mirror (Phase 4), that's called out explicitly.
 
 ## Phase 3 — `GKScene` (in-memory container)
 
-- [ ] `GKScene` — `rootNode: SKNode?`, `entities: MutableList<GKEntity>`,
+- [x] `GKScene` — `rootNode: SKNode?`, `entities: MutableList<GKEntity>`,
       `graphs: MutableMap<String, GKGraph>`
-- [ ] **Out of scope:** the `.sks`-file-loading initializer (`GKScene(fileNamed:)`) — that format
+- [x] **Out of scope:** the `.sks`-file-loading initializer (`GKScene(fileNamed:)`) — that format
       is Xcode's GameplayKit scene editor output, with no Android equivalent to load; this mirrors
       the same exclusion GameplayKit's own `docs/ROADMAP.md` already documents for `GKScene`
-- [ ] Unit tests
+- [x] Unit tests
 
 ## Phase 4 — Agent steering → node sync helper (no direct Apple precedent)
 

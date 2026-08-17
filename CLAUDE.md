@@ -5,10 +5,10 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Project status
 
 Phase 0 (project scaffolding: Gradle Android library, ktlint/detekt, CI, Gitflow branch
-protection), Phase 1 (`GKSKNodeComponent`), and Phase 2 (`SKNode.entity`) are complete. Phase 3
-(`GKScene`), Phase 4 (agent-steering-to-node sync helper), and Phase 5 (documentation) are not yet
-started. See [`docs/ROADMAP.md`](docs/ROADMAP.md) for the full phase-by-phase plan and progress
-checklist.
+protection), Phase 1 (`GKSKNodeComponent`), Phase 2 (`SKNode.entity`), and Phase 3 (`GKScene`) are
+complete. Phase 4 (agent-steering-to-node sync helper — needs sign-off first, see below) and Phase
+5 (documentation) are not yet started. See [`docs/ROADMAP.md`](docs/ROADMAP.md) for the full
+phase-by-phase plan and progress checklist.
 
 ## Intent
 
