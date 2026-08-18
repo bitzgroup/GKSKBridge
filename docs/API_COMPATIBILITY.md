@@ -38,8 +38,8 @@ Two deviation categories recur throughout and are called out once here rather th
 - **No `GKScene(fileNamed:)` initializer.** Apple's variant loads a scene, along with its
   associated entities and graphs, from a file authored in Xcode's GameplayKit scene editor. That
   format is Xcode-specific tooling output with no Android equivalent to load, so `GKScene` here is
-  a plain in-memory container only — build the `rootNode`/`entities`/`graphs` in code and assign
-  them directly. This mirrors the same exclusion
+  a plain in-memory container only — build the scene tree in code, assign it to `rootNode`, and add
+  entities via `addEntity(_:)`/populate `graphs` directly. This mirrors the same exclusion
   [GameplayKit for Android](https://github.com/bitzgroup/GameplayKit)'s own docs already document
   for `GKScene` in general.
 

@@ -48,7 +48,8 @@ has no Apple precedent to mirror (Phase 4), that's called out explicitly.
 
 ## Phase 3 — `GKScene` (in-memory container)
 
-- [x] `GKScene` — `rootNode: SKNode?`, `entities: MutableList<GKEntity>`,
+- [x] `GKScene` — `rootNode: SKNode?`, `entities: List<GKEntity>` (get-only, matching Apple —
+      mutate via `addEntity(_:)`/`removeEntity(_:)`, not by exposing the backing list),
       `graphs: MutableMap<String, GKGraph>`
 - [x] **Out of scope:** the `.sks`-file-loading initializer (`GKScene(fileNamed:)`) — that format
       is Xcode's GameplayKit scene editor output, with no Android equivalent to load; this mirrors

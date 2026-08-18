@@ -30,15 +30,38 @@ class GKSceneTest {
     }
 
     @Test
-    fun `entities can be added and are kept in insertion order`() {
+    fun `addEntity appends and keeps insertion order`() {
         val scene = GKScene()
         val first = GKEntity()
         val second = GKEntity()
 
-        scene.entities.add(first)
-        scene.entities.add(second)
+        scene.addEntity(first)
+        scene.addEntity(second)
 
         assertEquals(listOf(first, second), scene.entities)
+    }
+
+    @Test
+    fun `removeEntity removes a previously added entity`() {
+        val scene = GKScene()
+        val first = GKEntity()
+        val second = GKEntity()
+        scene.addEntity(first)
+        scene.addEntity(second)
+
+        scene.removeEntity(first)
+
+        assertEquals(listOf(second), scene.entities)
+    }
+
+    @Test
+    fun `removeEntity is a no-op for an entity that was never added`() {
+        val scene = GKScene()
+        val entity = GKEntity()
+
+        scene.removeEntity(entity)
+
+        assertTrue(scene.entities.isEmpty())
     }
 
     @Test
