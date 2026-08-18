@@ -13,16 +13,31 @@ import jp.co.bitz.spritekit.SKNode
  * format is Xcode-specific tooling output with no Android equivalent to load — the same exclusion
  * [GameplayKit for Android](https://github.com/bitzgroup/GameplayKit)'s own `docs/ROADMAP.md`
  * already documents for `GKScene` in general. Build a `GKScene` in code instead: construct an
- * [SKNode]/[SKScene][jp.co.bitz.spritekit.SKScene] tree and [GKEntity] list the normal way, then
- * assign them to [rootNode]/[entities]/[graphs].
+ * [SKNode]/[SKScene][jp.co.bitz.spritekit.SKScene] tree, assign it to [rootNode], and add
+ * [GKEntity]s via [addEntity]/populate [graphs] directly.
  */
 public open class GKScene {
     /** The root node of the SpriteKit scene tree associated with this scene, or `null`. */
     public var rootNode: SKNode? = null
 
-    /** The entities associated with this scene. */
-    public val entities: MutableList<GKEntity> = mutableListOf()
+    private val mutableEntities: MutableList<GKEntity> = mutableListOf()
+
+    /** The entities associated with this scene. Add/remove via [addEntity]/[removeEntity]. */
+    public val entities: List<GKEntity> get() = mutableEntities
 
     /** The pathfinding graphs associated with this scene, keyed by name. */
     public val graphs: MutableMap<String, GKGraph> = mutableMapOf()
+
+    /** Adds [entity] to this scene's [entities], matching Apple's `addEntity(_:)`. */
+    public fun addEntity(entity: GKEntity) {
+        mutableEntities.add(entity)
+    }
+
+    /**
+     * Removes [entity] from this scene's [entities], matching Apple's `removeEntity(_:)`. No-op
+     * if it isn't present.
+     */
+    public fun removeEntity(entity: GKEntity) {
+        mutableEntities.remove(entity)
+    }
 }

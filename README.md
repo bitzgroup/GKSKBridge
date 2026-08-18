@@ -74,7 +74,7 @@ node.entity // == null again
 val scene =
     GKScene().apply {
         rootNode = SKScene(size = Vector2(1080f, 1920f))
-        entities += entity
+        addEntity(entity)
     }
 ```
 
