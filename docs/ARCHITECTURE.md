@@ -67,11 +67,28 @@ GKSKBridge's own distributable tree submodule-free — the sibling checkouts onl
 transiently inside a CI run (or a contributor's local dev setup) and are also excluded via
 `.gitignore` (`/GameplayKit/`, `/SpriteKit/`).
 
+## Publishing: staying `project(...)`-only, by design
+
+GameplayKit and SpriteKit both now publish stable, resolvable Maven artifacts (`maven-publish`
+scaffolding plus a tagged `0.1.0` release each), which removes the original blocker to giving
+GKSKBridge its own `maven-publish` scaffold. This repo still doesn't add one, on purpose:
+
+A host app is expected to depend on GameplayKit and SpriteKit as real Maven coordinates (they are
+genuinely standalone-useful libraries), while keeping GKSKBridge wired in as source via
+`project(":GKSKBridge:gkskbridge")` — the same project-path mechanism described above. GKSKBridge
+is bridging/glue code (`GKSKNodeComponent`, `GKAgentNodeComponent`, and so on) that only makes
+sense already paired with both frameworks, not a library a project would depend on by itself. That
+makes it a reasonable scope call to leave it as project-path-only rather than publish it
+independently.
+
+If GKSKBridge did add `maven-publish`, its own internal deps (`project(":GameplayKit:gameplaykit")`/
+`project(":SpriteKit:spritekit")`) would need to switch to Maven coordinates to be resolvable
+outside this repo's own build — which reintroduces Gradle version-resolution risk between a host
+app's own GameplayKit/SpriteKit Maven deps and GKSKBridge's, a risk the current project-path-only
+setup avoids entirely by construction (same source, so no version to drift). Revisit only if a
+consumer genuinely needs GKSKBridge without also embedding GameplayKit/SpriteKit as submodules.
+
 ## Not yet settled
 
-- **Publishing**: this module currently has no `maven-publish` scaffold, unlike its siblings.
-  A `project(...)` dependency doesn't translate to a resolvable Maven coordinate, so a real Maven
-  publish of GKSKBridge would need GameplayKit/SpriteKit to publish stable, resolvable artifacts
-  first — revisit if/when that happens.
 - **Scope**: exactly which cross-framework features this repo covers (entity↔node sync, agent
   steering, others) is not finalized yet.
