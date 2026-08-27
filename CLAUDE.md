@@ -68,9 +68,12 @@ with `sdk.dir=/path/to/Android/sdk`.
 - **Dependency mechanism**: no submodules of its own; `gkskbridge/build.gradle.kts` depends on
   GameplayKit/SpriteKit via `project(":GameplayKit:gameplaykit")` /
   `project(":SpriteKit:spritekit")`. See [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md).
-- **No `maven-publish` scaffold**, unlike the sibling repos: a `project(...)` dependency doesn't
-  translate to a resolvable Maven coordinate, so publishing GKSKBridge to Maven would need
-  GameplayKit/SpriteKit to publish stable artifacts first. Revisit if that changes.
+- **No `maven-publish` scaffold**, unlike the sibling repos, and staying that way even now that
+  GameplayKit/SpriteKit both publish stable artifacts: a host app is expected to depend on
+  GameplayKit/SpriteKit as real Maven coordinates while keeping GKSKBridge wired in as source via
+  `project(":GKSKBridge:gkskbridge")` — it's glue code that only makes sense already paired with
+  both frameworks, not a standalone library. See [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md)'s
+  "Publishing: staying `project(...)`-only, by design".
 - **Phase 4 shape** (agent-steering-to-node sync helper, no Apple precedent to mirror): a marker
   `GKComponent` (`GKAgentNodeComponent`) whose `sync()` looks up the entity's `GKAgent2D` by class
   each call rather than a fixed constructor reference, called once per frame from outside
