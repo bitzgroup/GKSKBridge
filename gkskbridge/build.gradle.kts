@@ -7,7 +7,7 @@ plugins {
 
 android {
     namespace = "jp.co.bitz.gkskbridge"
-    compileSdk = 34
+    compileSdk = 37
 
     defaultConfig {
         minSdk = 24
