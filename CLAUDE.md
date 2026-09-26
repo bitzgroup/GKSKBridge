@@ -121,6 +121,11 @@ branching model.
 - **Documentation language:** all docs (README, KDoc, ARCHITECTURE, etc.) must be written in
   **English** — this is an OSS project.
 - **Documentation location:** project docs beyond the root `README.md` live under `docs/`.
+- **Never name a private/unreleased consumer app.** This repo is public; some fixes here are
+  discovered while building other apps against it, and those apps may be private or unreleased.
+  Never reference such an app by name anywhere in this repo — commit messages, PR titles/
+  descriptions, code comments, or docs. Use generic phrasing instead ("a host app", "a consumer
+  app").
 - **No app/demo module, ever.** This repo is meant to be embedded into host apps as a **git
   submodule** — `settings.gradle.kts`'s `:gkskbridge` module is the only thing a host app should
   need from this repo (the `:GameplayKit:gameplaykit`/`:SpriteKit:spritekit` includes in this
