@@ -18,15 +18,15 @@ Currently present: `SKNode.entity`, `GKSKNodeComponent`, `GKScene` (in-memory co
 
 | # | Missing | Notes | Pri |
 | --- | --- | --- | --- |
-| K1 | `GKSKNodeComponent` as a `GKAgentDelegate` | Apple's `GKSKNodeComponent` conforms to `GKAgentDelegate` and moves its node from `agentDidUpdate(_:)` (and seeds the agent in `agentWillUpdate(_:)`). Here that job was given to a separate, no-Apple-precedent `GKAgentNodeComponent` + manual `sync()`. Add the delegate conformance so Apple-shaped code (`agent.delegate = nodeComponent`) ports unchanged; keep `GKAgentNodeComponent` as the documented alternative. | P1 |
-| K2 | `SKNode.obstacles(fromNodeBounds:)`, `obstacles(fromNodePhysicsBodies:)`, `obstacles(fromSpriteTextures:accuracy:)` | Build `GKPolygonObstacle`s from nodes for `GKObstacleGraph`/`GKMeshGraph`. The bounds variant is trivial; the physics-body variant needs SpriteKit to expose body shapes; the texture variant needs alpha tracing (same prerequisite as `SKPhysicsBody(texture:size:)`). | P1 / P2 / P3 |
+| ~~K1~~ | ~~`GKSKNodeComponent` as a `GKAgentDelegate`~~ | **Done.** `GKSKNodeComponent` implements `GKAgentDelegate` (`agentWillUpdate` seeds the agent from the node, `agentDidUpdate` moves the node), verified against Apple on iOS/tvOS simulators. 2D agents only — Apple's handling of `GKAgent3D` is garbage-in, recorded as a deviation. `GKAgentNodeComponent` stays as the once-per-frame alternative. | P1 |
+| K2 | `SKNode.obstacles(fromNodeBounds:)`, `obstacles(fromNodePhysicsBodies:)`, `obstacles(fromSpriteTextures:accuracy:)` | **Bounds variant done** as top-level `obstaclesFromNodeBounds(nodes)` (no `SKNode` companion to extend), matching Apple's vertices (verified on iOS/tvOS simulators). Remaining: the physics-body variant needs SpriteKit to expose body shapes; the texture variant needs alpha tracing (same prerequisite as `SKPhysicsBody(texture:size:)`). | P1 / P2 / P3 |
 | K3 | `SKTileMapNode.tileMapNodes(tileSet:columns:rows:tileSize:from:tileTypeNoiseMapThresholds:)` | Procedural tile maps from a `GKNoiseMap`. | P2 |
 | K4 | `SKTexture(noiseMap:)` | Texture from a `GKNoiseMap` (needs a public pixel-data `SKTexture` constructor in SpriteKit). | P2 |
-| K5 | `GKScene` ↔ `SKScene` conveniences | Apple's `GKScene.rootNode` is typed to a `GKSceneRootNodeType` that `SKScene` conforms to; here it is a plain `SKNode?`. Fine as is — record it in `API_COMPATIBILITY.md`. | Doc only |
+| ~~K5~~ | ~~`GKScene` ↔ `SKScene` conveniences~~ | **Done** — recorded in `API_COMPATIBILITY.md`. | Doc only |
 
 ## Proposed work order
 
-1. K1, K2 (bounds variant), K5 — no changes needed in the sibling libraries.
+1. ~~K1, K2 (bounds variant), K5~~ — done.
 2. K3, K4 and the rest of K2 — after the SpriteKit prerequisites named above exist.
 
 Update this file as items land; delete it once the table is empty.

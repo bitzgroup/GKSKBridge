@@ -33,7 +33,19 @@ Two deviation categories recur throughout and are called out once here rather th
   matching `SKNode` itself (all access is expected to happen on the same thread that owns the
   node).
 
+- **`GKSKNodeComponent` is a `GKAgentDelegate`, as Apple's is.** `agentWillUpdate` copies the
+  node's `position`/`zRotation` onto the agent, `agentDidUpdate` copies them back (verified on
+  iOS/tvOS simulators, recorded in the tic-tac-toe sample's `GameplayKitParity` probes), so
+  `agent.delegate = nodeComponent` ports unchanged. **Only `GKAgent2D` is synced; a `GKAgent3D` is
+  left alone.** Apple's component treats any agent as 2D: it copies a 3D agent's `x`/`y` onto the
+  node, but seeding one writes `z = 0` and the node's rotation and `y` into raw cells of the
+  agent's rotation matrix — not behavior worth reproducing.
+
 ## Scene container (`GKScene`)
+
+- **`rootNode` is a plain `SKNode?`.** Apple types it as `GKSceneRootNodeType`, a marker protocol
+  that `SKScene` (and SceneKit's `SCNScene`) conform to. With SpriteKit the only renderer here,
+  `SKNode?` covers the same use; assign the `SKScene` itself, as on Apple platforms.
 
 - **No `GKScene(fileNamed:)` initializer.** Apple's variant loads a scene, along with its
   associated entities and graphs, from a file authored in Xcode's GameplayKit scene editor. That
@@ -45,10 +57,10 @@ Two deviation categories recur throughout and are called out once here rather th
 
 ## Agent steering → node sync (`GKAgentNodeComponent`, `toSKVector2`/`toGKVector2`)
 
-- **No Apple precedent.** `GKAgentDelegate` is itself framework-agnostic in real GameplayKit —
-  apps are expected to implement it themselves to copy an agent's position onto a visual node.
-  `GKAgentNodeComponent` follows the structure of Apple's own WWDC 2015 "DemoBots" sample instead
-  of any shipped API: it looks up the entity's `GKAgent2D` by class on every `sync()` call rather
+- **No Apple precedent.** Apple's own way to make a node follow an agent is setting a
+  `GKSKNodeComponent` as the agent's delegate, which this library supports too (above).
+  `GKAgentNodeComponent` is an addition for syncing once per frame instead of around every agent
+  update, following the structure of Apple's own WWDC 2015 "DemoBots" sample: it looks up the entity's `GKAgent2D` by class on every `sync()` call rather
   than capturing a fixed reference, and `sync()` is meant to be called once per frame from outside
   the normal `GKComponent.update()` pass — e.g. an `SKScene` subclass's `didFinishUpdate()`
   override — once that frame's physics/actions have already been simulated.
@@ -59,3 +71,15 @@ Two deviation categories recur throughout and are called out once here rather th
   `toGKVector2()` are plain field-copy conversions bridging the two, used internally by
   `GKAgentNodeComponent.sync()` and available for any other GameplayKit ↔ SpriteKit position/
   vector handoff.
+
+## Obstacles from nodes (`obstaclesFromNodeBounds`)
+
+- **A top-level function, not `SKNode.obstacles(fromNodeBounds:)`.** Apple's is a class method on
+  `SKNode`; this library's `SKNode` lives in another repo and has no companion object to extend.
+  Behavior matches Apple's (verified on iOS/tvOS simulators, recorded in the tic-tac-toe sample's
+  `GameplayKitParity` probes): four vertices per node, the corners of the node's own content
+  bounds through its own and every ancestor's transform — the root's included — so a rotated node
+  gives the rotated rectangle and children don't widen it.
+- **Not implemented yet:** `obstacles(fromNodePhysicsBodies:)` (needs SpriteKit for Android to
+  expose physics-body shapes) and `obstacles(fromSpriteTextures:accuracy:)` (needs alpha-outline
+  tracing) — see `docs/PARITY_GAP_PLAN.md` (K2).

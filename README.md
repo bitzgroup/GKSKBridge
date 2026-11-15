@@ -14,7 +14,8 @@ inside either sibling library, and how it depends on both without vendoring copi
 
 The full [`docs/ROADMAP.md`](docs/ROADMAP.md) plan is complete: entity ↔ node association
 (`GKSKNodeComponent`, `SKNode.entity`), a scene container (`GKScene`), and an agent-steering-to-node
-sync helper (`GKAgentNodeComponent`) are implemented and tested.
+sync helper (`GKAgentNodeComponent`) are implemented and tested, plus — from a later Apple-parity
+pass — `GKSKNodeComponent` as a `GKAgentDelegate` and `obstaclesFromNodeBounds`.
 
 ## Requirements
 
@@ -80,6 +81,17 @@ val scene =
 
 ### Agent steering → node sync
 
+The Apple way: make the entity's `GKSKNodeComponent` the agent's delegate. The node then follows
+the agent around every agent update (and a node the game moves itself seeds the agent first).
+
+```kotlin
+val agent = GKAgent2D().apply { behavior = GKBehavior.of(GKGoal.toSeekAgent(targetAgent), weight = 1f) }
+agent.delegate = entity.component<GKSKNodeComponent>()
+entity.addComponent(agent)
+```
+
+Or, to sync once per frame after actions and physics have settled, `GKAgentNodeComponent`:
+
 ```kotlin
 val agent =
     GKAgent2D().apply {
@@ -100,6 +112,13 @@ class GameScene(size: Vector2) : SKScene(size) {
         scene.syncAgentNodes()
     }
 }
+```
+
+### Obstacles from nodes
+
+```kotlin
+// One GKPolygonObstacle per node, from its bounds — Apple's SKNode.obstacles(fromNodeBounds:).
+val graph = GKObstacleGraph(obstaclesFromNodeBounds(wallNodes), bufferRadius = 8f)
 ```
 
 ### `Vector2` bridge
