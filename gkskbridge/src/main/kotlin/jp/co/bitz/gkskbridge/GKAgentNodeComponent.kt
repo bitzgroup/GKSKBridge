@@ -7,9 +7,10 @@ import jp.co.bitz.gameplaykit.GKComponent
  * Marks an entity as wanting its [GKSKNodeComponent] node kept in sync with its [GKAgent2D]'s
  * simulated position/rotation.
  *
- * Has no direct Apple precedent — GameplayKit's `GKAgentDelegate` is itself framework-agnostic,
- * and Apple's own WWDC 2015 "DemoBots" sample shows apps wiring this sync themselves. This
- * component follows that sample's structure rather than any shipped API:
+ * Has no direct Apple precedent: Apple's own way is making the entity's [GKSKNodeComponent] the
+ * agent's delegate, which works here too and syncs around every agent update. This component is
+ * the alternative for syncing once per frame instead, following the structure of Apple's WWDC 2015
+ * "DemoBots" sample rather than any shipped API:
  *
  * - **No fixed reference to the agent.** [sync] looks up the entity's [GKAgent2D] by class each
  *   call, rather than a constructor capturing one directly — so it keeps working if the entity's

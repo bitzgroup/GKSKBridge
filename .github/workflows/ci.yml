@@ -19,17 +19,21 @@ jobs:
 
       # GKSKBridge carries no submodules of its own (see docs/ARCHITECTURE.md); these are plain
       # sibling checkouts for this CI build only, matching settings.gradle.kts's relative paths.
+      # Builds targeting main use the siblings' main (their releases); everything else uses their
+      # develop, since GKSKBridge's develop may build on sibling API not released yet.
       - name: Checkout GameplayKit (sibling dependency)
         uses: actions/checkout@v4
         with:
           repository: bitzgroup/GameplayKit
           path: GameplayKit
+          ref: ${{ (github.base_ref || github.ref_name) == 'main' && 'main' || 'develop' }}
 
       - name: Checkout SpriteKit (sibling dependency)
         uses: actions/checkout@v4
         with:
           repository: bitzgroup/SpriteKit
           path: SpriteKit
+          ref: ${{ (github.base_ref || github.ref_name) == 'main' && 'main' || 'develop' }}
 
       - name: Set up JDK 17
         uses: actions/setup-java@v4

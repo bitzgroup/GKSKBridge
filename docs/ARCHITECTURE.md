@@ -67,6 +67,12 @@ GKSKBridge's own distributable tree submodule-free — the sibling checkouts onl
 transiently inside a CI run (or a contributor's local dev setup) and are also excluded via
 `.gitignore` (`/GameplayKit/`, `/SpriteKit/`).
 
+Which branch of the siblings it checks out follows the branch being built: a build targeting
+`main` (a push to `main`, or a PR into it — i.e. a `release/*`/`hotfix/*`) uses their `main`, so a
+release is checked against released siblings; every other build uses their `develop`, since work on
+GKSKBridge's `develop` may use sibling API that hasn't been released yet. The consequence for
+releases: cut GameplayKit/SpriteKit releases first, then GKSKBridge's.
+
 ## Publishing: staying `project(...)`-only, by design
 
 GameplayKit and SpriteKit both now publish stable, resolvable Maven artifacts (`maven-publish`

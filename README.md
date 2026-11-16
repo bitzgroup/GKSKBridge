@@ -14,11 +14,12 @@ inside either sibling library, and how it depends on both without vendoring copi
 
 The full [`docs/ROADMAP.md`](docs/ROADMAP.md) plan is complete: entity ↔ node association
 (`GKSKNodeComponent`, `SKNode.entity`), a scene container (`GKScene`), and an agent-steering-to-node
-sync helper (`GKAgentNodeComponent`) are implemented and tested.
+sync helper (`GKAgentNodeComponent`) are implemented and tested, plus — from a later Apple-parity
+pass — `GKSKNodeComponent` as a `GKAgentDelegate` and `obstaclesFromNodeBounds`.
 
 ## Requirements
 
-- Android `minSdk` 24, `compileSdk`/`targetSdk` 34
+- Android `minSdk` 24, `compileSdk` 37
 - Kotlin 2.0+
 - [GameplayKit](https://github.com/bitzgroup/GameplayKit) and
   [SpriteKit](https://github.com/bitzgroup/SpriteKit), checked out as sibling directories (see
@@ -80,6 +81,17 @@ val scene =
 
 ### Agent steering → node sync
 
+The Apple way: make the entity's `GKSKNodeComponent` the agent's delegate. The node then follows
+the agent around every agent update (and a node the game moves itself seeds the agent first).
+
+```kotlin
+val agent = GKAgent2D().apply { behavior = GKBehavior.of(GKGoal.toSeekAgent(targetAgent), weight = 1f) }
+agent.delegate = entity.component<GKSKNodeComponent>()
+entity.addComponent(agent)
+```
+
+Or, to sync once per frame after actions and physics have settled, `GKAgentNodeComponent`:
+
 ```kotlin
 val agent =
     GKAgent2D().apply {
@@ -89,17 +101,24 @@ val agent =
 entity.addComponent(agent)
 entity.addComponent(GKAgentNodeComponent())
 
-class GameScene(size: Vector2) : SKScene(size) {
+class GameScene(size: Vector2, private val gkScene: GKScene) : SKScene(size) {
     override fun update(deltaTime: Duration) {
-        entity.update(deltaTime) // advances the agent's steering simulation
+        gkScene.entities.forEach { it.update(deltaTime) } // advances each agent's steering simulation
     }
 
     override fun didFinishUpdate() {
         // Copy this frame's now-settled agent position/rotation onto every entity's node, after
         // actions and physics have already been simulated for the frame.
-        scene.syncAgentNodes()
+        gkScene.syncAgentNodes()
     }
 }
+```
+
+### Obstacles from nodes
+
+```kotlin
+// One GKPolygonObstacle per node, from its bounds — Apple's SKNode.obstacles(fromNodeBounds:).
+val graph = GKObstacleGraph(obstaclesFromNodeBounds(wallNodes), bufferRadius = 8f)
 ```
 
 ### `Vector2` bridge
