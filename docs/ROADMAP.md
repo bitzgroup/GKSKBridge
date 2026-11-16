@@ -21,15 +21,15 @@ has no Apple precedent to mirror (Phase 4), that's called out explicitly.
 ## Phase 0 — Project Setup
 
 - [x] Scaffold Gradle Android library module (`gkskbridge`, `jp.co.bitz.gkskbridge`)
-- [x] Configure Kotlin, min/target/compile SDK versions (minSdk 24, compileSdk/targetSdk 34)
+- [x] Configure Kotlin, min/target/compile SDK versions (minSdk 24, compileSdk/targetSdk 34; `compileSdk` since raised to 37)
 - [x] Configure `ktlint`/`detekt`
 - [x] Set up CI (GitHub Actions; checks out GameplayKit/SpriteKit as sibling repos, not submodules)
 - [x] Wire dependency on GameplayKit/SpriteKit via Gradle project-path (no submodules of its own)
       — see [`docs/ARCHITECTURE.md`](ARCHITECTURE.md)
 - [x] Set up Gitflow branching + branch protection on `main`/`develop`
-- [ ] Maven publishing scaffold — **not currently planned**: a `project(...)` dependency doesn't
-      translate to a resolvable Maven coordinate, so this would need GameplayKit/SpriteKit to
-      publish stable artifacts first. Revisit if that changes.
+- [ ] Maven publishing scaffold — **not planned**: GameplayKit/SpriteKit now publish stable
+      artifacts, but this repo stays `project(...)`-only on purpose — see
+      [`docs/ARCHITECTURE.md`](ARCHITECTURE.md)
 
 ## Phase 1 — Entity ↔ Node: `GKSKNodeComponent`
 
@@ -58,9 +58,10 @@ has no Apple precedent to mirror (Phase 4), that's called out explicitly.
 
 ## Phase 4 — Agent steering → node sync helper (no direct Apple precedent)
 
-Apple's `GKAgentDelegate` itself lives in GameplayKit and has no SpriteKit dependency — apps are
-expected to implement it themselves to copy a `GKAgent`'s simulated position onto a visual node.
-That boilerplate is exactly the kind of cross-framework glue this repo exists to hold, so it's in
+Apple's own way to make a node follow an agent is setting the entity's `GKSKNodeComponent` as the
+agent's `GKAgentDelegate`, which syncs around every agent update (added here later — see
+"Post-roadmap" below). This phase adds an alternative that syncs once per frame instead, after
+actions and physics have settled. That glue is exactly what this repo exists to hold, so it's in
 scope even without a literal Apple type to mirror.
 
 Design (confirmed with maintainer, follows the structure of Apple's own WWDC 2015 "DemoBots"
