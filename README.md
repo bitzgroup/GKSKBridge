@@ -19,7 +19,7 @@ pass — `GKSKNodeComponent` as a `GKAgentDelegate` and `obstaclesFromNodeBounds
 
 ## Requirements
 
-- Android `minSdk` 24, `compileSdk`/`targetSdk` 34
+- Android `minSdk` 24, `compileSdk` 37
 - Kotlin 2.0+
 - [GameplayKit](https://github.com/bitzgroup/GameplayKit) and
   [SpriteKit](https://github.com/bitzgroup/SpriteKit), checked out as sibling directories (see
@@ -101,15 +101,15 @@ val agent =
 entity.addComponent(agent)
 entity.addComponent(GKAgentNodeComponent())
 
-class GameScene(size: Vector2) : SKScene(size) {
+class GameScene(size: Vector2, private val gkScene: GKScene) : SKScene(size) {
     override fun update(deltaTime: Duration) {
-        entity.update(deltaTime) // advances the agent's steering simulation
+        gkScene.entities.forEach { it.update(deltaTime) } // advances each agent's steering simulation
     }
 
     override fun didFinishUpdate() {
         // Copy this frame's now-settled agent position/rotation onto every entity's node, after
         // actions and physics have already been simulated for the frame.
-        scene.syncAgentNodes()
+        gkScene.syncAgentNodes()
     }
 }
 ```
