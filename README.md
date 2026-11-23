@@ -49,7 +49,8 @@ bitzgroup/
 GameplayKit/SpriteKit sibling projects, whose build scripts misresolve `$rootDir`-relative paths
 against this repo's root. See [`CLAUDE.md`](CLAUDE.md#commands).)
 
-See [`CLAUDE.md`](CLAUDE.md) for the full command reference and project structure.
+See [`CLAUDE.md`](CLAUDE.md) for the full command reference and project structure, and
+[`CONTRIBUTING.md`](CONTRIBUTING.md) before opening a pull request.
 
 ## Usage
 
