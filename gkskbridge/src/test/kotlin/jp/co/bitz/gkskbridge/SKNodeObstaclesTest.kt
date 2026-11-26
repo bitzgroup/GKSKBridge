@@ -2,6 +2,8 @@ package jp.co.bitz.gkskbridge
 
 import jp.co.bitz.gameplaykit.GKPolygonObstacle
 import jp.co.bitz.spritekit.SKNode
+import jp.co.bitz.spritekit.SKPhysicsBody
+import jp.co.bitz.spritekit.SKScene
 import jp.co.bitz.spritekit.SKSpriteNode
 import kotlin.math.PI
 import kotlin.test.Test
@@ -83,5 +85,48 @@ class SKNodeObstaclesTest {
         assertEquals(0.3f, node.zRotation)
         assertEquals(2f, node.xScale)
         assertEquals(3f, node.yScale)
+    }
+}
+
+// Expectations are Apple's, recorded by the tic-tac-toe sample's GameplayKitParity probes
+// (GKPhysicsObstacleParityTests).
+class SKNodePhysicsBodyObstaclesTest {
+    private val scene = SKScene(size = SKVector2(100f, 100f))
+
+    private fun bodyNode(
+        body: SKPhysicsBody?,
+        position: SKVector2 = SKVector2.Zero,
+    ): SKNode =
+        SKNode().also {
+            it.physicsBody = body
+            it.position = position
+            scene.addChild(it)
+        }
+
+    @Test
+    fun `each body gives one obstacle of its outline in scene space`() {
+        val rectangle = bodyNode(SKPhysicsBody.rectangleOf(SKVector2(10f, 20f)), SKVector2(100f, 50f))
+        val circle = bodyNode(SKPhysicsBody.circleOfRadius(10f))
+
+        val obstacles = obstaclesFromNodePhysicsBodies(listOf(rectangle, circle))
+
+        assertEquals(2, obstacles.size)
+        val rectangleVertices = obstacles[0].vertices.map { it.x to it.y }
+        assertEquals(listOf(95f to 40f, 105f to 40f, 105f to 60f, 95f to 60f), rectangleVertices)
+        assertEquals(8, obstacles[1].vertices.size)
+        assertEquals(10f, obstacles[1].vertices[0].x, 0.001f)
+    }
+
+    @Test
+    fun `nodes without an outline are skipped`() {
+        val none = bodyNode(null)
+        val edge = bodyNode(SKPhysicsBody.edgeFrom(SKVector2.Zero, SKVector2(10f, 0f)))
+        val outsideScene = SKNode().apply { physicsBody = SKPhysicsBody.rectangleOf(SKVector2(2f, 2f)) }
+        val square = bodyNode(SKPhysicsBody.rectangleOf(SKVector2(2f, 2f)))
+
+        val obstacles = obstaclesFromNodePhysicsBodies(listOf(none, edge, outsideScene, square))
+
+        assertEquals(1, obstacles.size)
+        assertEquals(-1f, obstacles[0].vertices[0].x, 0.001f)
     }
 }
