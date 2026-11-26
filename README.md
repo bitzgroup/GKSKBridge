@@ -15,7 +15,8 @@ inside either sibling library, and how it depends on both without vendoring copi
 The full [`docs/ROADMAP.md`](docs/ROADMAP.md) plan is complete: entity ↔ node association
 (`GKSKNodeComponent`, `SKNode.entity`), a scene container (`GKScene`), and an agent-steering-to-node
 sync helper (`GKAgentNodeComponent`) are implemented and tested, plus — from a later Apple-parity
-pass — `GKSKNodeComponent` as a `GKAgentDelegate` and `obstaclesFromNodeBounds`.
+pass — `GKSKNodeComponent` as a `GKAgentDelegate`, `obstaclesFromNodeBounds` and
+`SKTexture(noiseMap)`.
 
 ## Requirements
 
@@ -120,6 +121,14 @@ class GameScene(size: Vector2, private val gkScene: GKScene) : SKScene(size) {
 ```kotlin
 // One GKPolygonObstacle per node, from its bounds — Apple's SKNode.obstacles(fromNodeBounds:).
 val graph = GKObstacleGraph(obstaclesFromNodeBounds(wallNodes), bufferRadius = 8f)
+```
+
+### Textures from noise
+
+```kotlin
+// One gray pixel per sample, black at -1 to white at 1 — Apple's SKTexture(noiseMap:).
+val noiseMap = GKNoiseMap(GKNoise(GKPerlinNoiseSource()), sampleCount = Vector2Int(128, 128))
+val ground = SKSpriteNode(texture = SKTexture(noiseMap = noiseMap), size = Vector2(512f, 512f))
 ```
 
 ### `Vector2` bridge
