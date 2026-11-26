@@ -15,8 +15,8 @@ inside either sibling library, and how it depends on both without vendoring copi
 The full [`docs/ROADMAP.md`](docs/ROADMAP.md) plan is complete: entity ↔ node association
 (`GKSKNodeComponent`, `SKNode.entity`), a scene container (`GKScene`), and an agent-steering-to-node
 sync helper (`GKAgentNodeComponent`) are implemented and tested, plus — from a later Apple-parity
-pass — `GKSKNodeComponent` as a `GKAgentDelegate`, `obstaclesFromNodeBounds` and
-`SKTexture(noiseMap)`.
+pass — `GKSKNodeComponent` as a `GKAgentDelegate`, `obstaclesFromNodeBounds`,
+`obstaclesFromNodePhysicsBodies`, `tileMapNodes` and `SKTexture(noiseMap)`.
 
 ## Requirements
 
@@ -121,6 +121,20 @@ class GameScene(size: Vector2, private val gkScene: GKScene) : SKScene(size) {
 ```kotlin
 // One GKPolygonObstacle per node, from its bounds — Apple's SKNode.obstacles(fromNodeBounds:).
 val graph = GKObstacleGraph(obstaclesFromNodeBounds(wallNodes), bufferRadius = 8f)
+
+// Or from their physics bodies' outlines — Apple's SKNode.obstacles(fromNodePhysicsBodies:).
+val bodyObstacles = obstaclesFromNodePhysicsBodies(wallNodes)
+```
+
+### Tile maps from noise
+
+```kotlin
+// Water everywhere, sand from -0.2 up, grass from 0.3 up: one stacked map per tile group —
+// Apple's SKTileMapNode.tileMapNodes(tileSet:columns:rows:tileSize:from:tileTypeNoiseMapThresholds:).
+val noiseMap = GKNoiseMap(GKNoise(GKPerlinNoiseSource()), sampleCount = Vector2Int(64, 64))
+val layers = tileMapNodes(terrain, columns = 64, rows = 64, tileSize = Vector2(32f, 32f), from = noiseMap,
+    tileTypeNoiseMapThresholds = listOf(-0.2, 0.3))
+layers.forEach(scene::addChild)
 ```
 
 ### Textures from noise

@@ -72,7 +72,7 @@ Two deviation categories recur throughout and are called out once here rather th
   `GKAgentNodeComponent.sync()` and available for any other GameplayKit ↔ SpriteKit position/
   vector handoff.
 
-## Obstacles from nodes (`obstaclesFromNodeBounds`)
+## Obstacles from nodes (`obstaclesFromNodeBounds`, `obstaclesFromNodePhysicsBodies`)
 
 - **A top-level function, not `SKNode.obstacles(fromNodeBounds:)`.** Apple's is a class method on
   `SKNode`; this library's `SKNode` lives in another repo and has no companion object to extend.
@@ -80,9 +80,33 @@ Two deviation categories recur throughout and are called out once here rather th
   `GameplayKitParity` probes): four vertices per node, the corners of the node's own content
   bounds through its own and every ancestor's transform — the root's included — so a rotated node
   gives the rotated rectangle and children don't widen it.
-- **Not implemented yet:** `obstacles(fromNodePhysicsBodies:)` (needs SpriteKit for Android to
-  expose physics-body shapes) and `obstacles(fromSpriteTextures:accuracy:)` (needs alpha-outline
-  tracing) — see `docs/PARITY_GAP_PLAN.md` (K2).
+- **`obstaclesFromNodePhysicsBodies(nodes)`** is Apple's `obstacles(fromNodePhysicsBodies:)`, a
+  top-level function for the same reason. Each obstacle is the body's outline in its scene's
+  space, read through SpriteKit for Android's `physicsBodyOutline` (which has no Apple
+  counterpart, since Apple keeps body shapes private): a rectangle's or polygon's own vertices, a
+  circle as an octagon at scene-space angles, an edge chain's points with a loop repeating its
+  first one. A node with no body, a single-edge body, a body of several parts or a concave polygon
+  gives no obstacle, so the result can be shorter than the input (recorded on iOS/tvOS
+  simulators). Two differences remain. A node outside a scene gives no obstacle here, while Apple's
+  framework crashes. The vertices use the node's current transform, while Apple's use the one its
+  physics engine last synced, which lags behind a node moved after its body joined the scene until
+  the next frame.
+- **Not implemented yet:** `obstacles(fromSpriteTextures:accuracy:)` (needs alpha-outline tracing)
+  — see `docs/PARITY_GAP_PLAN.md` (K2).
+
+## Tile maps from noise (`tileMapNodes`)
+
+- **A top-level function, not `SKTileMapNode.tileMapNodes(tileSet:columns:rows:tileSize:from:
+  tileTypeNoiseMapThresholds:)`**, for the same reason as `obstaclesFromNodeBounds`; the
+  thresholds are a `List<Double>` rather than `[NSNumber]`. Behavior matches Apple's (verified on
+  iOS/tvOS simulators, recorded in the tic-tac-toe sample's `GameplayKitParity` probes): one map
+  per threshold plus one; map 0 full of the first group, map `k` holding group `k` wherever the
+  noise is at least threshold `k − 1` (empty when the tile set has no group `k`); each cell's
+  noise the mean of 3 × 3 linearly interpolated samples at 1/6, 1/2 and 5/6 of the cell, clamped
+  to the noise map's last sample.
+- **Tiles are placed with `setTileGroup`, so the maps automap**, as Apple's do. Which rule
+  SpriteKit for Android picks at a map's edges can differ from Apple's — see SpriteKit's
+  `docs/PARITY_GAP_PLAN.md` (M2).
 
 ## Textures from noise (`SKTexture(noiseMap)`)
 
