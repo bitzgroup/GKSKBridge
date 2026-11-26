@@ -4,6 +4,7 @@ import jp.co.bitz.gameplaykit.GKPolygonObstacle
 import jp.co.bitz.spritekit.Rect
 import jp.co.bitz.spritekit.SKNode
 import jp.co.bitz.spritekit.Vector2
+import jp.co.bitz.spritekit.physicsBodyOutline
 import kotlin.math.cos
 import kotlin.math.sin
 
@@ -26,6 +27,26 @@ import kotlin.math.sin
  */
 public fun obstaclesFromNodeBounds(nodes: List<SKNode>): List<GKPolygonObstacle> =
     nodes.map { node -> GKPolygonObstacle(node.boundsCornersInRootSpace().map { it.toGKVector2() }) }
+
+/**
+ * Builds a [GKPolygonObstacle] from the physics body of each node that has one — Apple's
+ * `SKNode.obstacles(fromNodePhysicsBodies:)`. A top-level function for the same reason as
+ * [obstaclesFromNodeBounds].
+ *
+ * Matches Apple's (verified on iOS/tvOS simulators, recorded in the tic-tac-toe sample's
+ * `GameplayKitParity` probes): the vertices are the body's outline in its scene's space, as
+ * SpriteKit's `physicsBodyOutline` describes. A rectangle or polygon gives its own vertices, a
+ * circle an octagon, an edge chain its points (an edge loop repeats its first one). Nodes give no
+ * obstacle when they have no body, when the body is a single edge, several parts or a concave
+ * polygon, or when they aren't in a scene, so the result can be shorter than [nodes].
+ *
+ * Like any node access, call it on the scene's render thread.
+ */
+public fun obstaclesFromNodePhysicsBodies(nodes: List<SKNode>): List<GKPolygonObstacle> =
+    nodes.mapNotNull {
+            node ->
+        physicsBodyOutline(node)?.let { outline -> GKPolygonObstacle(outline.map { it.toGKVector2() }) }
+    }
 
 private fun SKNode.boundsCornersInRootSpace(): List<Vector2> {
     val bounds = localContentBounds()
