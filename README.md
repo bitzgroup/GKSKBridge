@@ -16,7 +16,7 @@ The full [`docs/ROADMAP.md`](docs/ROADMAP.md) plan is complete: entity ↔ node 
 (`GKSKNodeComponent`, `SKNode.entity`), a scene container (`GKScene`), and an agent-steering-to-node
 sync helper (`GKAgentNodeComponent`) are implemented and tested, plus — from a later Apple-parity
 pass — `GKSKNodeComponent` as a `GKAgentDelegate`, `obstaclesFromNodeBounds`,
-`obstaclesFromNodePhysicsBodies` and `tileMapNodes`.
+`obstaclesFromNodePhysicsBodies`, `tileMapNodes` and `SKTexture(noiseMap)`.
 
 ## Requirements
 
@@ -135,6 +135,14 @@ val noiseMap = GKNoiseMap(GKNoise(GKPerlinNoiseSource()), sampleCount = Vector2I
 val layers = tileMapNodes(terrain, columns = 64, rows = 64, tileSize = Vector2(32f, 32f), from = noiseMap,
     tileTypeNoiseMapThresholds = listOf(-0.2, 0.3))
 layers.forEach(scene::addChild)
+```
+
+### Textures from noise
+
+```kotlin
+// One gray pixel per sample, black at -1 to white at 1 — Apple's SKTexture(noiseMap:).
+val noiseMap = GKNoiseMap(GKNoise(GKPerlinNoiseSource()), sampleCount = Vector2Int(128, 128))
+val ground = SKSpriteNode(texture = SKTexture(noiseMap = noiseMap), size = Vector2(512f, 512f))
 ```
 
 ### `Vector2` bridge

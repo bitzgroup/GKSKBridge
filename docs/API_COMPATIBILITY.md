@@ -107,3 +107,16 @@ Two deviation categories recur throughout and are called out once here rather th
 - **Tiles are placed with `setTileGroup`, so the maps automap**, as Apple's do. Which rule
   SpriteKit for Android picks at a map's edges can differ from Apple's — see SpriteKit's
   `docs/PARITY_GAP_PLAN.md` (M2).
+
+## Textures from noise (`SKTexture(noiseMap)`)
+
+- **A top-level factory function, not an `SKTexture` constructor.** Apple's is an initializer on
+  `SKTexture`, which lives in another repo here; the function is named after the type, so a call
+  reads the same: `SKTexture(noiseMap = map)`.
+- Behavior matches Apple's grayscale output (verified on iOS/tvOS simulators, recorded in the
+  tic-tac-toe sample's `GameplayKitParity` probes). There is one pixel per sample, sample row 0 is
+  the bottom row, and pixels are opaque. A value `v`, clamped to `-1..1`, becomes the gray
+  `(v + 1) / 2 × 255`, computed in double precision and rounded down.
+- **No gradient colors.** Apple colors the texture with the noise's `gradientColors` (red at `-1`
+  to blue at `1` gives the matching blend). GameplayKit for Android's `GKNoise` has no
+  `gradientColors`, so the texture is always Apple's default black-to-white gradient.
